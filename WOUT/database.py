@@ -1,4 +1,3 @@
-# ...existing code...
 import sqlite3
 import os
 import hashlib
@@ -21,35 +20,68 @@ def connect_db(db_path=None):
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT UNIQUE NOT NULL,
-        password_hash TEXT NOT NULL,
-        display_name TEXT NOT NULL DEFAULT '',
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        password TEXT NOT NULL,
+        display_name TEXT DEFAULT '',
+        created_at TEXT DEFAULT '',
+        weight REAL,
+        weight_unit TEXT DEFAULT 'kg',
+        birthdate TEXT
     );
     """)
     
-    # Add display_name column to existing tables (migration)
-    try:
-        cur.execute("ALTER TABLE users ADD COLUMN display_name TEXT NOT NULL DEFAULT ''")
-    except:
-        pass  # Column already exists
+    # Verify columns exist and add if missing
+    cur.execute("PRAGMA table_info(users)")
+    columns = {column[1]: column for column in cur.fetchall()}
     
-    # Update existing users with NULL display_name to use their username
-    try:
-        cur.execute(
-            "UPDATE users SET display_name = username WHERE display_name IS NULL OR display_name = ''"
-        )
-    except:
-        pass
+    if 'password' not in columns:
+        cur.execute("ALTER TABLE users ADD COLUMN password TEXT NOT NULL DEFAULT ''")
+    
+    if 'display_name' not in columns:
+        cur.execute("ALTER TABLE users ADD COLUMN display_name TEXT DEFAULT ''")
+    
+    if 'created_at' not in columns:
+        cur.execute("ALTER TABLE users ADD COLUMN created_at TEXT DEFAULT ''")
+    
+    if 'weight' not in columns:
+        cur.execute("ALTER TABLE users ADD COLUMN weight REAL")
+    
+    if 'weight_unit' not in columns:
+        cur.execute("ALTER TABLE users ADD COLUMN weight_unit TEXT DEFAULT 'kg'")
+    
+    if 'birthdate' not in columns:
+        cur.execute("ALTER TABLE users ADD COLUMN birthdate TEXT")
+    
+    if 'workouts' not in columns:
+        cur.execute("ALTER TABLE users ADD COLUMN workouts INTEGER DEFAULT 0")
+    
+    if 'streak' not in columns:
+        cur.execute("ALTER TABLE users ADD COLUMN streak INTEGER DEFAULT 0")
+    
+    if 'total_time' not in columns:
+        cur.execute("ALTER TABLE users ADD COLUMN total_time INTEGER DEFAULT 0")
+    
+    if 'last_login' not in columns:
+        cur.execute("ALTER TABLE users ADD COLUMN last_login TEXT")
     
     cur.execute("""
     CREATE TABLE IF NOT EXISTS routines (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER,
+        user_id INTEGER NOT NULL,
         name TEXT NOT NULL,
         notes TEXT,
-        FOREIGN KEY(user_id) REFERENCES users(id)
+        is_favorited INTEGER DEFAULT 0,
+        created_at TEXT DEFAULT '',
+        FOREIGN KEY (user_id) REFERENCES users(id)
     );
     """)
+    
+    # Verify routines columns
+    cur.execute("PRAGMA table_info(routines)")
+    routine_columns = {column[1]: column for column in cur.fetchall()}
+    
+    if 'is_favorited' not in routine_columns:
+        cur.execute("ALTER TABLE routines ADD COLUMN is_favorited INTEGER DEFAULT 0")
+    
     conn.commit()
     return conn
 
@@ -59,14 +91,14 @@ def verify_credentials(conn, username, password):
     row = cur.fetchone()
     if not row:
         return None
-    if row["password_hash"] == _hash_password(password):
+    if row["password"] == _hash_password(password):
         return {"id": row["id"], "username": row["username"], "display_name": row["display_name"]}
     return None
 
 def create_user(conn, username, password, display_name=None):
     try:
         cur = conn.cursor()
-        cur.execute("INSERT INTO users (username, password_hash, display_name) VALUES (?, ?, ?)",
+        cur.execute("INSERT INTO users (username, password, display_name) VALUES (?, ?, ?)",
                     (username, _hash_password(password), display_name))
         conn.commit()
         uid = cur.lastrowid
