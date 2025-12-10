@@ -256,7 +256,7 @@ class App:
         if self.current_user and isinstance(self.current_user, dict):
             try:
                 cursor = self.db.cursor()
-                cursor.execute("SELECT * FROM users WHERE id = ?", (self.current_user.get('id'),))
+                cursor.execute("SELECT id, username, password, display_name, created_at, weight, weight_unit, birthdate FROM users WHERE id = ?", (self.current_user.get('id'),))
                 user_row = cursor.fetchone()
                 
                 if user_row:
@@ -265,7 +265,10 @@ class App:
                         'username': user_row[1],
                         'password': user_row[2],
                         'display_name': user_row[3],
-                        'created_at': user_row[4] if len(user_row) > 4 else None
+                        'created_at': user_row[4] if user_row[4] else "N/A",
+                        'weight': user_row[5],
+                        'weight_unit': user_row[6],
+                        'birthdate': user_row[7]
                     }
             except Exception as e:
                 print(f"Error refreshing user: {e}")

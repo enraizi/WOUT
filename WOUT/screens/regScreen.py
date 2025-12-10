@@ -75,43 +75,45 @@ def register_window(parent, db, on_registered=None, on_back_to_login=None):
     def register():
         username = username_entry.get().strip()
         password = password_entry.get()
-        confirm_pwd = confirm_pwd_entry.get()
+        confirm_password = confirm_pwd_entry.get()
         display_name = display_name_entry.get().strip()
         
         if not username or not password or not display_name:
             error_label.configure(text="All fields are required")
             return
         
-        if password != confirm_pwd:
+        if password != confirm_password:
             error_label.configure(text="Passwords don't match")
             return
         
         try:
+            from datetime import datetime
+            
             cursor = db.cursor()
-            cursor.execute("SELECT id FROM users WHERE username = ?", (username,))
+            cursor.execute("SELECT id FROM users WHERE LOWER(username) = LOWER(?)", (username,))
+            
             if cursor.fetchone():
-                error_label.configure(text="Username already taken")
+                error_label.configure(text="Username already exists")
                 return
             
+            current_date = datetime.now().strftime("%Y-%m-%d")
+            
             cursor.execute(
-                "INSERT INTO users (username, password, display_name) VALUES (?, ?, ?)",
-                (username, password, display_name)
+                "INSERT INTO users (username, password, display_name, created_at) VALUES (?, ?, ?, ?)",
+                (username, password, display_name, current_date)
             )
             db.commit()
             
-            cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
-            user_row = cursor.fetchone()
+            user = {
+                'id': cursor.lastrowid,
+                'username': username,
+                'password': password,
+                'display_name': display_name,
+                'created_at': current_date
+            }
             
-            if user_row:
-                user = {
-                    'id': user_row[0],
-                    'username': user_row[1],
-                    'password': user_row[2],
-                    'display_name': user_row[3],
-                    'created_at': user_row[4] if len(user_row) > 4 else None
-                }
-                if on_registered:
-                    on_registered(user)
+            if on_registered:
+                on_registered(user)
         except Exception as e:
             error_label.configure(text=f"Registration failed: {str(e)}")
     

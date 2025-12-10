@@ -172,62 +172,75 @@ def create_routines(parent, db_conn, user=None):
                 def make_edit_command(rid=routine_id, rname=routine_name):
                     def edit_routine():
                         try:
-                            # Get routine details
                             routine_data = routinesCrud.get_routine(db_conn, rid)
                             
-                            # Create edit modal
                             root = parent.winfo_toplevel()
                             modal = ctk.CTkToplevel(root)
                             modal.title("Edit Routine")
-                            modal.geometry("400x400")
+                            modal.geometry("480x500")
                             modal.resizable(False, False)
                             modal.grab_set()
                             
-                            # Center modal
                             modal.update_idletasks()
                             root.update_idletasks()
-                            x = root.winfo_x() + (root.winfo_width() // 2) - 200
-                            y = root.winfo_y() + (root.winfo_height() // 2) - 200
+                            x = root.winfo_x() + (root.winfo_width() // 2) - 240
+                            y = root.winfo_y() + (root.winfo_height() // 2) - 250
                             modal.geometry(f"+{x}+{y}")
                             
-                            modal_frame = ctk.CTkFrame(modal, fg_color=("white", "#0a0e27"))
-                            modal_frame.pack(fill="both", expand=True, padx=20, pady=20)
+                            modal_frame = ctk.CTkFrame(modal, fg_color=("gray95", "#1a1f26"), corner_radius=0)
+                            modal_frame.pack(fill="both", expand=True, padx=0, pady=0)
                             
-                            ctk.CTkLabel(modal_frame, text="Edit Routine", 
-                                       font=ctk.CTkFont(size=14, weight="bold"),
-                                       text_color=("gray10", "#ffd700")).pack(anchor="w", pady=(0, 16))
+                            bordered_card = ctk.CTkFrame(modal_frame, fg_color=("gray75", "#ffd700"), corner_radius=12)
+                            bordered_card.pack(fill="both", expand=True, padx=16, pady=16)
                             
-                            ctk.CTkLabel(modal_frame, text="Routine Name", 
-                                       font=ctk.CTkFont(size=10, weight="bold"),
-                                       text_color=("gray20", "#e0e0e0")).pack(anchor="w", pady=(0, 6))
+                            card_inner = ctk.CTkFrame(bordered_card, fg_color=("gray95", "#1a1f26"), corner_radius=11)
+                            card_inner.pack(fill="both", expand=True, padx=1, pady=1)
+                            
+                            header = ctk.CTkFrame(card_inner, fg_color=("gray88", "#2a3a4a"), corner_radius=0)
+                            header.pack(fill="x", padx=0, pady=0)
+                            
+                            ctk.CTkLabel(header, text="✏️ Edit Routine",
+                                        font=ctk.CTkFont(size=15, weight="bold"),
+                                        text_color=("gray10", "#ffd700")).pack(anchor="w", padx=20, pady=14)
+                            
+                            content = ctk.CTkFrame(card_inner, fg_color="transparent")
+                            content.pack(fill="both", expand=True, padx=20, pady=16)
+                            
+                            ctk.CTkLabel(content, text="Routine Name",
+                                        font=ctk.CTkFont(size=11, weight="bold"),
+                                        text_color=("gray20", "#e0e0e0")).pack(anchor="w", pady=(0, 6))
                             
                             name_var = ctk.StringVar(value=rname)
-                            name_entry = ctk.CTkEntry(modal_frame, textvariable=name_var,
-                                                      height=36, border_width=1,
-                                                      border_color=("gray80", "#333333"),
-                                                      fg_color=("gray95", "#1a1f26"))
-                            name_entry.pack(fill="x", pady=(0, 16))
+                            name_entry = ctk.CTkEntry(content, textvariable=name_var,
+                                                      height=40, border_width=2,
+                                                      border_color=("gray70", "#ffd700"),
+                                                      fg_color=("white", "#2a2f36"),
+                                                      text_color=("gray10", "#ffd700"),
+                                                      font=ctk.CTkFont(size=11))
+                            name_entry.pack(fill="x", pady=(0, 14))
                             
-                            ctk.CTkLabel(modal_frame, text="Notes", 
-                                       font=ctk.CTkFont(size=10, weight="bold"),
-                                       text_color=("gray20", "#e0e0e0")).pack(anchor="w", pady=(0, 6))
+                            ctk.CTkLabel(content, text="Notes",
+                                        font=ctk.CTkFont(size=11, weight="bold"),
+                                        text_color=("gray20", "#e0e0e0")).pack(anchor="w", pady=(0, 6))
                             
-                            notes_text = ctk.CTkTextbox(modal_frame, height=120, corner_radius=6,
-                                                       fg_color=("gray95", "#1a1f26"),
-                                                       border_width=1,
-                                                       border_color=("gray80", "#333333"))
-                            notes_text.pack(fill="both", expand=True, pady=(0, 16))
+                            notes_text = ctk.CTkTextbox(content, height=120, corner_radius=8,
+                                                       fg_color=("white", "#2a2f36"),
+                                                       border_width=2,
+                                                       border_color=("gray70", "#ffd700"),
+                                                       text_color=("gray10", "#ffffff"),
+                                                       font=ctk.CTkFont(size=11))
+                            notes_text.pack(fill="both", expand=True, pady=(0, 14))
                             
 
                             if routine_data and routine_data.get('notes'):
                                 notes_text.insert("1.0", routine_data['notes'])
                             
-                            error_msg = ctk.CTkLabel(modal_frame, text="", 
+                            error_msg = ctk.CTkLabel(content, text="",
                                                     font=ctk.CTkFont(size=9),
                                                     text_color=("#dc2626", "#ff6b6b"))
                             error_msg.pack(anchor="w", pady=(0, 12))
                             
-                            button_frame = ctk.CTkFrame(modal_frame, fg_color="transparent")
+                            button_frame = ctk.CTkFrame(content, fg_color="transparent")
                             button_frame.pack(fill="x")
                             
                             def save_changes():
@@ -245,20 +258,25 @@ def create_routines(parent, db_conn, user=None):
                                 except Exception as e:
                                     error_msg.configure(text=f"Error: {str(e)[:40]}")
                             
-                            ctk.CTkButton(button_frame, text="Cancel", 
+
+                            ctk.CTkButton(button_frame, text="Cancel",
                                          command=modal.destroy,
-                                         width=80, height=34,
-                                         fg_color=("gray90", "#2a2f36"),
+                                         width=100, height=40,
+                                         fg_color=("gray80", "#2a3a4a"),
                                          text_color=("gray20", "#e0e0e0"),
-                                         hover_color=("gray80", "#333333"),
-                                         corner_radius=6).pack(side="left", padx=(0, 8))
+                                         hover_color=("gray70", "#3a4a5a"),
+                                         corner_radius=8,
+                                         font=ctk.CTkFont(size=11, weight="bold")).pack(side="left", padx=(0, 10))
                             
-                            ctk.CTkButton(button_frame, text="Save", 
+
+                            ctk.CTkButton(button_frame, text="Save",
                                          command=save_changes,
-                                         width=80, height=34,
+                                         width=100, height=40,
                                          fg_color=("#2563eb", "#2563eb"),
+                                         text_color=("white", "white"),
                                          hover_color=("#1d4ed8", "#1d4ed8"),
-                                         corner_radius=6).pack(side="left")
+                                         corner_radius=8,
+                                         font=ctk.CTkFont(size=11, weight="bold")).pack(side="left")
                         except Exception as e:
                             print(f"Error opening edit modal: {e}")
                     return edit_routine

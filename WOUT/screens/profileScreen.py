@@ -19,7 +19,7 @@ def create_profile(parent, db, user=None):
         # Extract user data
         username = "User"
         display_name = "User"
-        created_date = "N/A"
+        created_at = "N/A"
         user_id = None
         weight = None
         weight_unit = "kg"
@@ -31,7 +31,7 @@ def create_profile(parent, db, user=None):
                     user_id = user.get('id')
                     username = user.get('username', 'User')
                     display_name = user.get('display_name') or username
-                    created_date = user.get('created_at', 'N/A')
+                    created_at = user.get('created_at', 'N/A')
                     weight = user.get('weight')
                     weight_unit = user.get('weight_unit', 'kg')
                     birthdate = user.get('birthdate')
@@ -39,21 +39,22 @@ def create_profile(parent, db, user=None):
                     user_id = user[0] if len(user) > 0 else None
                     username = user[1] if len(user) > 1 else "User"
                     display_name = user[3] if len(user) > 3 and user[3] else username
-                    created_date = user[4] if len(user) > 4 else "N/A"
+                    created_at = user[4] if len(user) > 4 else "N/A"
             except Exception as e:
                 print(f"Error extracting user data: {e}")
         
-        # Fetch latest user data from database to get updated display_name
+        # Fetch latest user data from database
         if user_id:
             try:
                 cursor = db.cursor()
-                cursor.execute("SELECT display_name, weight, weight_unit, birthdate FROM users WHERE id = ?", (user_id,))
+                cursor.execute("SELECT display_name, weight, weight_unit, birthdate, created_at FROM users WHERE id = ?", (user_id,))
                 db_row = cursor.fetchone()
                 if db_row:
                     display_name = db_row[0] if db_row[0] else username
                     weight = db_row[1]
                     weight_unit = db_row[2] if db_row[2] else "kg"
                     birthdate = db_row[3]
+                    created_at = db_row[4] if db_row[4] else "N/A"
             except Exception as e:
                 print(f"Error fetching user details: {e}")
         
@@ -706,13 +707,14 @@ def create_profile(parent, db, user=None):
 
         ctk.CTkLabel(account_inner, text="  Account Details", 
                      font=ctk.CTkFont(size=14, weight="bold"),
-                     text_color=("gray10", "#ffd700")).pack(anchor="w", pady=(0, 16))
+                     text_color=("gray10", "#ffd700")).pack(anchor="w", pady=(0, 4))
 
         # Account info items
         info_items = [
             ("  👤 Username", f" {username}"),
             ("  ⚖️ Weight", f" {weight} {weight_unit}" if weight else " Not set"),
             ("  📅 Birthdate", f" {birthdate}" if birthdate else " Not set"),
+            ("  📅 Date Joined", f" {created_at}"),
         ]
 
         for label, value in info_items:
@@ -819,9 +821,12 @@ def create_profile(parent, db, user=None):
             favorite_routines = []
 
         if not favorite_routines:
-            ctk.CTkLabel(fav_inner, text="No pinned routines yet", 
+            empty_frame = ctk.CTkFrame(fav_inner, fg_color="transparent")
+            empty_frame.pack(fill="both", expand=True)
+            
+            ctk.CTkLabel(empty_frame, text="No pinned routines yet", 
                         font=ctk.CTkFont(size=11),
-                        text_color=("gray60", "#a0a0a0")).pack(anchor="w", pady=20)
+                        text_color=("gray60", "#a0a0a0")).pack(expand=True)
         else:
             fav_scroll = ctk.CTkScrollableFrame(fav_inner, fg_color="transparent", corner_radius=0)
             fav_scroll.pack(fill="both", expand=True)

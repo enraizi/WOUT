@@ -39,23 +39,21 @@ def create_sidebar(parent, on_nav=None, is_logged_in=False, current_page=None, d
         welcome_frame = ctk.CTkFrame(welcome_container, fg_color="transparent")
         welcome_frame.pack(fill="x", padx=14, pady=(12, 0))
         
-        # Logo emoji
         ctk.CTkLabel(welcome_frame, text="💪", 
-                     font=ctk.CTkFont(size=48, weight="bold")).pack(anchor="w", pady=(0, 6))
+                     font=ctk.CTkFont(size=56, weight="bold")).pack(anchor="w", pady=(0, 8))
         
         ctk.CTkLabel(welcome_frame, text="Welcome to", 
-                     font=ctk.CTkFont(size=16, weight="bold"),
+                     font=ctk.CTkFont(size=18, weight="bold"),
                      text_color=("gray40", "#90caf9")).pack(anchor="w", pady=(0, 2))
         
         ctk.CTkLabel(welcome_frame, text="WOUT", 
-                     font=ctk.CTkFont(size=40, weight="bold"),
-                     text_color=("gray10", "#ffd700")).pack(anchor="w", pady=(0, 16))
+                     font=ctk.CTkFont(size=48, weight="bold"),
+                     text_color=("gray10", "#ffd700")).pack(anchor="w", pady=(0, 18))
         
-        # Features list
         features_label = ctk.CTkLabel(welcome_frame, text="Get Started", 
-                                     font=ctk.CTkFont(size=15, weight="bold"),
+                                     font=ctk.CTkFont(size=16, weight="bold"),
                                      text_color=("gray50", "#90caf9"))
-        features_label.pack(anchor="w", pady=(0, 10))
+        features_label.pack(anchor="w", pady=(0, 12))
         
         features = [
             ("✓", "Track workouts", "Build habits"),
@@ -65,24 +63,23 @@ def create_sidebar(parent, on_nav=None, is_logged_in=False, current_page=None, d
         
         for icon, text, subtext in features:
             feature_row = ctk.CTkFrame(welcome_frame, fg_color="transparent")
-            feature_row.pack(fill="x", pady=4)
+            feature_row.pack(fill="x", pady=5)
             
             ctk.CTkLabel(feature_row, text=icon, 
-                        font=ctk.CTkFont(size=14, weight="bold"),
+                        font=ctk.CTkFont(size=15, weight="bold"),
                         text_color=("gray20", "#ffd700")).pack(side="left", padx=(0, 8))
             
             text_frame = ctk.CTkFrame(feature_row, fg_color="transparent")
             text_frame.pack(side="left", fill="x", expand=True)
             
             ctk.CTkLabel(text_frame, text=text, 
-                        font=ctk.CTkFont(size=13, weight="bold"),
+                        font=ctk.CTkFont(size=14, weight="bold"),
                         text_color=("gray30", "#ffffff")).pack(anchor="w")
             
             ctk.CTkLabel(text_frame, text=subtext, 
-                        font=ctk.CTkFont(size=11),
+                        font=ctk.CTkFont(size=12),
                         text_color=("gray60", "#a0a0a0")).pack(anchor="w")
         
-        # Spacer
         spacer = ctk.CTkFrame(welcome_container, fg_color="transparent")
         spacer.pack(fill="both", expand=True)
         

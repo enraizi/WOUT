@@ -69,7 +69,6 @@ def login_window(parent, db, on_success=None, on_create_account=None):
         try:
             cursor = db.cursor()
             
-            # Try to login with case-insensitive match
             cursor.execute("""
                 SELECT id, username, password, display_name, created_at 
                 FROM users 
@@ -87,7 +86,7 @@ def login_window(parent, db, on_success=None, on_create_account=None):
                         'username': stored_username,
                         'password': stored_password,
                         'display_name': stored_display_name,
-                        'created_at': stored_created_at
+                        'created_at': stored_created_at if stored_created_at else "N/A"
                     }
                     if on_success:
                         on_success(user)
@@ -108,11 +107,11 @@ def login_window(parent, db, on_success=None, on_create_account=None):
                              fg_color=("#2563eb", "#2563eb"),
                              hover_color=("#1d4ed8", "#1d4ed8"),
                              corner_radius=8)
-    login_btn.pack(fill="x", pady=(16, 24))
+    login_btn.pack(fill="x", pady=(16, 12))
     
     # Sign up prompt with clickable text
     signup_section = ctk.CTkFrame(form, fg_color="transparent")
-    signup_section.pack(fill="x", pady=(12, 0))
+    signup_section.pack(fill="x", pady=(0, 0))
     
     def go_to_signup():
         if on_create_account:
