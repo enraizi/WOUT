@@ -2,8 +2,9 @@ import os
 import customtkinter as ctk
 from PIL import Image
 
+from WOUT.screens import home_screen, login_screen, profile_screen, reg_screen, routines_screen
 from database import connect_db
-from screens import loginScreen, homeScreen, regScreen, sidebar, routinesScreen, profileScreen
+from screens import sidebar
 
 ctk.set_appearance_mode("light")
 ctk.set_default_color_theme("blue")
@@ -297,7 +298,7 @@ class App:
             self.current_page = "login"
             self._clear_main()
             self._update_brand_responsiveness()
-            loginScreen.login_window(self.main_frame, self.db, on_success=self._on_login_success, on_create_account=self.show_register)
+            login_screen.login_window(self.main_frame, self.db, on_success=self._on_login_success, on_create_account=self.show_register)
         except Exception as e:
             print(f"Login screen error: {e}")
 
@@ -370,7 +371,7 @@ class App:
             self.current_page = "register"
             self._clear_main()
             self._update_brand_responsiveness()
-            regScreen.register_window(self.main_frame, self.db, 
+            reg_screen.register_window(self.main_frame, self.db, 
                                      on_registered=self._on_registered,
                                      on_back_to_login=self.show_login)
         except Exception as e:
@@ -391,7 +392,7 @@ class App:
             self._refresh_sidebar()
             self._clear_main()
             self._update_brand_responsiveness()
-            homeScreen.create_home(self.main_frame, self.db, user=self.current_user)
+            home_screen.create_home(self.main_frame, self.db, user=self.current_user)
         except Exception as e:
             print(f"Home screen error: {e}")
 
@@ -405,7 +406,7 @@ class App:
             self._refresh_sidebar()
             self._clear_main()
             self._update_brand_responsiveness()
-            routinesScreen.create_routines(self.main_frame, self.db, user=self.current_user)
+            routines_screen.create_routines(self.main_frame, self.db, user=self.current_user)
         except Exception as e:
             print(f"Routines screen error: {e}")
 
@@ -419,7 +420,7 @@ class App:
             self._refresh_sidebar()
             self._clear_main()
             self._update_brand_responsiveness()
-            profileScreen.create_profile(self.main_frame, self.db, user=self.current_user)
+            profile_screen.create_profile(self.main_frame, self.db, user=self.current_user)
         except Exception as e:
             print(f"Profile screen error: {e}")
 

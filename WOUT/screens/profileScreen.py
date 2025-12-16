@@ -6,7 +6,7 @@ import os
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from crud import routinesCrud
+from WOUT.crud import routines_crud
 
 def create_profile(parent, db, user=None):
     try:
@@ -815,7 +815,7 @@ def create_profile(parent, db, user=None):
         fav_inner.pack(fill="both", expand=True, padx=0, pady=0, ipadx=20, ipady=16)
 
         try:
-            favorite_routines = routinesCrud.get_favorite_routines(db, user_id)
+            favorite_routines = routines_crud.get_favorite_routines(db, user_id)
         except Exception as e:
             print(f"Error fetching favorite routines: {e}")
             favorite_routines = []

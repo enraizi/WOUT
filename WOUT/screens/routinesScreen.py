@@ -4,7 +4,7 @@ import os
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from crud import routinesCrud
+from WOUT.crud import routines_crud
 
 def create_routines(parent, db_conn, user=None):
     frame = ctk.CTkFrame(parent, corner_radius=0, fg_color="transparent")
@@ -78,7 +78,7 @@ def create_routines(parent, db_conn, user=None):
             return
 
         try:
-            routinesCrud.create_routine(db_conn, user_id=user_id, name=name, notes=notes)
+            routines_crud.create_routine(db_conn, user_id=user_id, name=name, notes=notes)
             routine_name_entry.delete(0, "end")
             notes_entry.delete("1.0", "end")
             error_label.configure(text="")
@@ -111,7 +111,7 @@ def create_routines(parent, db_conn, user=None):
             w.destroy()
 
         try:
-            routines = routinesCrud.get_routines(db_conn, user_id=user_id)
+            routines = routines_crud.get_routines(db_conn, user_id=user_id)
         except Exception as e:
             print(f"Error fetching routines: {e}")
             routines = []
@@ -163,7 +163,7 @@ def create_routines(parent, db_conn, user=None):
                 def make_delete_command(rid=routine_id):
                     def delete_routine():
                         try:
-                            routinesCrud.delete_routine(db_conn, rid)
+                            routines_crud.delete_routine(db_conn, rid)
                             refresh_routines()
                         except Exception as e:
                             print(f"Error deleting routine: {e}")
@@ -172,7 +172,7 @@ def create_routines(parent, db_conn, user=None):
                 def make_edit_command(rid=routine_id, rname=routine_name):
                     def edit_routine():
                         try:
-                            routine_data = routinesCrud.get_routine(db_conn, rid)
+                            routine_data = routines_crud.get_routine(db_conn, rid)
                             
                             root = parent.winfo_toplevel()
                             modal = ctk.CTkToplevel(root)
@@ -252,7 +252,7 @@ def create_routines(parent, db_conn, user=None):
                                     return
                                 
                                 try:
-                                    routinesCrud.update_routine(db_conn, rid, new_name, new_notes)
+                                    routines_crud.update_routine(db_conn, rid, new_name, new_notes)
                                     modal.destroy()
                                     refresh_routines()
                                 except Exception as e:
