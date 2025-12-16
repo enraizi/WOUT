@@ -2,7 +2,7 @@ import os
 import customtkinter as ctk
 from PIL import Image
 
-from WOUT.screens import home_screen, login_screen, profile_screen, reg_screen, routines_screen
+from screens import home_screen, login_screen, profile_screen, reg_screen, routines_screen
 from database import connect_db
 from screens import sidebar
 

@@ -4,7 +4,7 @@ import os
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from WOUT.crud import routines_crud
+from crud import routines_crud
 
 def create_home(parent, db_conn, user=None, refresh_callback=None):
     frame = ctk.CTkFrame(parent, corner_radius=0, fg_color="transparent")
@@ -567,7 +567,7 @@ def show_routine_start(parent, db_conn, user, routine_id, routine_name):
     content_box.configure(state="normal")
 
     try:
-        from WOUT.crud import routines_crud
+        from crud import routines_crud
         routine_data = routines_crud.get_routine(db_conn, routine_id)
         if routine_data and routine_data.get('notes'):
             content_box.insert("1.0", routine_data['notes'])

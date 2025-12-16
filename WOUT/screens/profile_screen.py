@@ -6,7 +6,7 @@ import os
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from WOUT.crud import routines_crud
+from crud import routines_crud
 
 def create_profile(parent, db, user=None):
     try:

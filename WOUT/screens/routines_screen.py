@@ -4,7 +4,7 @@ import os
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from WOUT.crud import routines_crud
+from crud import routines_crud
 
 def create_routines(parent, db_conn, user=None):
     frame = ctk.CTkFrame(parent, corner_radius=0, fg_color="transparent")
