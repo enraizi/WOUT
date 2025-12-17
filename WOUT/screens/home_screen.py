@@ -35,7 +35,7 @@ def create_home(parent, db_conn, user=None, refresh_callback=None):
     main_content = ctk.CTkFrame(frame, fg_color="transparent", corner_radius=0)
     main_content.pack(fill="both", expand=True, padx=32, pady=(0, 32))
 
-    # Create a dynamic container that will hold either pinned or all routines
+    # Dynamic container for pinned or all routines
     content_container = ctk.CTkFrame(main_content, fg_color="transparent")
     content_container.pack(fill="both", expand=True, padx=0, pady=0)
 
